@@ -1,15 +1,17 @@
-import React, { useState } from 'react';
+import React, { useContext } from 'react';
 import { Form, Input } from '@rocketseat/unform';
 import schema from './schema';
 import { userRegistration } from '../../services/registrations.service';
+import { userStatus } from '../../store/modules/users/actions';
+import { Store } from '../../store';
 // import { Container } from './styles';
 
 export default function Registration() {
-  const [userData, setUserData] = useState({});
+  const [, dispatch] = useContext(Store);
 
   async function handleSubmit(data) {
-    const { user } = await userRegistration({ user: { ...data } });
-    setUserData(user);
+    const response = await userRegistration({ user: { ...data } });
+    dispatch(userStatus({ data: response }));
   }
 
   return (

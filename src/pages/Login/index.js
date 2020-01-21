@@ -1,15 +1,15 @@
-import React, { useState } from 'react';
+import React, { useContext } from 'react';
 import { Form, Input } from '@rocketseat/unform';
 import schema from './schema';
 import { userLogin } from '../../services/sessions.service';
-// import { Container } from './styles';
+import { Store } from '../../store';
+import { userStatus } from '../../store/modules/users/actions';
 
 export default function Login() {
-  const [userSessionData, setUserSessionData] = useState({});
-
+  const [, dispatch] = useContext(Store);
   async function handleSubmit(data) {
     const response = await userLogin({ user: { ...data } });
-    setUserSessionData(response);
+    dispatch(userStatus({ data: response }));
   }
 
   return (
