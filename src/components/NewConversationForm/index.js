@@ -1,21 +1,17 @@
 import React, { useState } from 'react';
-import { API_URL, HEADERS } from '../../config/api';
+import { saveConversations } from '../../services/conversations.service';
 
 const NewConversationForm = () => {
-  const [title, setTitle] = useState({ title: '' });
+  const [conversation, setConversation] = useState({ title: '' });
 
   const handleChange = e => {
-    setTitle({ title: e.target.value });
+    setConversation({ title: e.target.value });
   };
 
-  const handleSubmit = e => {
+  const handleSubmit = async e => {
     e.preventDefault();
-    fetch(`${API_URL}/conversations`, {
-      method: 'POST',
-      headers: HEADERS,
-      body: JSON.stringify(title),
-    });
-    setTitle({ title: '' });
+    await saveConversations(conversation);
+    setConversation({ title: '' });
   };
 
   return (
@@ -23,7 +19,7 @@ const NewConversationForm = () => {
       <form onSubmit={handleSubmit}>
         <label>New Conversation:</label>
         <br />
-        <input type="text" value={title} onChange={handleChange} />
+        <input type="text" value={conversation.title} onChange={handleChange} />
         <input type="submit" />
       </form>
     </div>

@@ -5,8 +5,8 @@ import { Store } from '../store';
 
 import modules from '../store/modules';
 
-import Home from '../pages/Home';
 import Dashboard from '../pages/Dashboard';
+import Conversation from '../pages/ConversationsList';
 
 const { Provider } = Store;
 
@@ -16,8 +16,8 @@ export default function Routes() {
   return (
     <Provider value={store}>
       <Switch>
-        <Route exact path="/" component={Home} />
-        <Route path="/dashboard" component={Dashboard} isPrivate />
+        <Route exact path="/" component={Conversation} />
+        <Route path="/dashboard" component={Dashboard} />
       </Switch>
     </Provider>
   );

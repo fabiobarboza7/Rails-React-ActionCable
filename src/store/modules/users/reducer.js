@@ -7,7 +7,6 @@ export default (state = INITIAL_STATE, action) => {
     case 'USER_LOGGED_IN':
       return { ...state, logged_in: action.logged_in };
     case 'USER_LOGGED_OUT':
-      console.log(action);
       return { logged_in: !action.logged_out };
     default:
       return state;

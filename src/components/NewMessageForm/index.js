@@ -1,47 +1,37 @@
-import React from 'react';
-import { API_ROOT, HEADERS } from '../constants';
+import React, { useState, useEffect } from 'react';
+import { saveMessages } from '../../services/messages.service';
 
-class NewMessageForm extends React.Component {
-  state = {
+const NewMessageForm = ({ conversation_id }) => {
+  const [text, setText] = useState({
     text: '',
-    conversation_id: this.props.conversation_id
+    conversation_id,
+  });
+
+  useEffect(() => {
+    setText({ text: text.text, conversation_id });
+  }, [conversation_id, text.text]);
+
+  const handleChange = e => {
+    setText({ text: e.target.value, conversation_id: text.conversation_id });
   };
 
-  componentWillReceiveProps = nextProps => {
-    this.setState({ conversation_id: nextProps.conversation_id });
-  };
-
-  handleChange = e => {
-    this.setState({ text: e.target.value });
-  };
-
-  handleSubmit = e => {
+  const handleSubmit = async e => {
     e.preventDefault();
+    await saveMessages(text);
 
-    fetch(`${API_ROOT}/messages`, {
-      method: 'POST',
-      headers: HEADERS,
-      body: JSON.stringify(this.state)
-    });
-    this.setState({ text: '' });
+    setText({ text: '', conversation_id: text.conversation_id });
   };
 
-  render = () => {
-    return (
-      <div className="newMessageForm">
-        <form onSubmit={this.handleSubmit}>
-          <label>New Message:</label>
-          <br />
-          <input
-            type="text"
-            value={this.state.text}
-            onChange={this.handleChange}
-          />
-          <input type="submit" />
-        </form>
-      </div>
-    );
-  };
-}
+  return (
+    <div className="newMessageForm">
+      <form onSubmit={handleSubmit}>
+        <label>New Message:</label>
+        <br />
+        <input type="text" value={text.text} onChange={handleChange} />
+        <input type="submit" />
+      </form>
+    </div>
+  );
+};
 
 export default NewMessageForm;

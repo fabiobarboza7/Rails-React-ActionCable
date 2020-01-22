@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { ActionCable } from 'react-actioncable-provider';
-import { API_ROOT } from '../constants';
-import NewConversationForm from './NewConversationForm';
-import MessagesArea from './MessagesArea';
-import Cable from './Cable';
+import { ActionCableConsumer } from 'react-actioncable-provider';
+import NewConversationForm from '../../components/NewConversationForm';
+import MessagesArea from '../../components/MessagesArea';
+import Cable from '../../components/Cables';
+import { getConversations } from '../../services/conversations.service';
 
 // helpers
 
@@ -14,9 +14,13 @@ const findActive = (conversations, active) => {
 const mapConversations = (conversations, handleClick) => {
   return conversations.map(conversation => {
     return (
-      <li key={conversation.id} onClick={() => handleClick(conversation.id)}>
+      <button
+        type="button"
+        key={conversation.id}
+        onClick={() => handleClick(conversation.id)}
+      >
         {conversation.title}
-      </li>
+      </button>
     );
   });
 };
@@ -26,9 +30,12 @@ export default function ConversationsList() {
   const [active, setActive] = useState(null);
 
   useEffect(() => {
-    fetch(`${API_ROOT}/conversations`)
-      .then(res => res.json())
-      .then(convers => setConversations({ convers }));
+    async function getConversationService() {
+      const { data } = await getConversations();
+      setConversations([...data]);
+    }
+
+    getConversationService();
   }, []);
 
   const handleClick = id => {
@@ -48,12 +55,12 @@ export default function ConversationsList() {
       convers => convers.id === message.conversation_id
     );
     conversation.messages = [...conversation.messages, message];
-    setConversations({ conversations });
+    setConversations([...conversations]);
   };
 
   return (
     <div className="conversationsList">
-      <ActionCable
+      <ActionCableConsumer
         channel={{ channel: 'ConversationsChannel' }}
         onReceived={handleReceivedConversation}
       />
